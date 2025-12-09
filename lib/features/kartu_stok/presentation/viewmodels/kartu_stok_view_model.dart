@@ -61,6 +61,14 @@ class KartuStokViewModel extends ChangeNotifier {
     : _kartuStokList.where((stok) =>
         stok.nama.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
 
+  List<KartuStokData> get bahanBakuList => filteredKartuStokList
+      .where((item) => item.jenis == JenisBahan.bahanBaku)
+      .toList();
+
+  List<KartuStokData> get bahanKemasList => filteredKartuStokList
+      .where((item) => item.jenis == JenisBahan.bahanPengemas)
+      .toList();
+
   KartuStokViewModel(this._repository) {
     fetchKartuStok();
   }

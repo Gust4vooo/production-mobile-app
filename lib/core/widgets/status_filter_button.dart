@@ -48,8 +48,8 @@ class StatusFilterButton extends StatelessWidget {
                 const SizedBox(width: 4),
                 Icon(
                   currentSortOption == StockSortOption.byStatusPlenty
-                      ? Icons.arrow_downward // Masih Banyak -> panah bawah
-                      : Icons.arrow_upward,   // Habis -> panah atas
+                      ? Icons.arrow_upward // Masih Banyak -> panah bawah
+                      : Icons.arrow_downward,   // Habis -> panah atas
                   size: 18,
                   color: const Color.fromARGB(255, 7, 117, 70),
                 ),

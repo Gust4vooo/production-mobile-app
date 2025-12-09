@@ -22,11 +22,14 @@ class ProductionScreen extends StatelessWidget {
       appBar: const CustomAppBar(title: 'Produksi'),
       body: Column(
         children: [
-          CustomSearchBar(
-            hintText: 'Cari produksi...',
-            onChanged: (value) {
-              viewModel.setSearchQuery(value);
-            },
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: CustomSearchBar(
+              hintText: 'Cari produksi...',
+              onChanged: (value) {
+                viewModel.setSearchQuery(value);
+              },
+            ),
           ),
           Expanded(
             child: viewModel.isLoading
@@ -159,4 +162,3 @@ class ProductionScreen extends StatelessWidget {
     );
   }
 }
-
