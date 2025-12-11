@@ -5,6 +5,9 @@ import 'package:seger/core/database/app.database.dart';
 import 'package:seger/features/produksi/presentation/viewmodels/produksi_view_model.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final String produksiId;
@@ -78,6 +81,34 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         const Divider(height: 32),
 
         const Text(
+          'QR Code Produksi',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                QrImageView(
+                  data: header.id.toString(),
+                  version: QrVersions.auto,
+                  size: 250.0,
+                  errorCorrectionLevel: QrErrorCorrectLevel.L,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.download),
+                  label: const Text('Unduh QR Code'),
+                  onPressed: () => _downloadQRCode(header.id.toString()),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const Divider(height: 32),
+
+        const Text(
           'Item Produksi',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
@@ -118,5 +149,72 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _downloadQRCode(String produksiId) async {
+    try {
+      // Generate QR code terlebih dahulu
+      final painter = QrPainter(
+        data: produksiId,
+        version: QrVersions.auto,
+        errorCorrectionLevel: QrErrorCorrectLevel.L,
+      );
+
+      final picSize = 300.0;
+      final image = await painter.toImageData(picSize);
+      
+      if (image == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Gagal mengonversi QR Code ke gambar')),
+          );
+        }
+        return;
+      }
+
+      // Gunakan app-specific directory yang tidak memerlukan MANAGE_EXTERNAL_STORAGE
+      final appDir = await getApplicationDocumentsDirectory();
+      if (appDir == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Direktori aplikasi tidak ditemukan')),
+          );
+        }
+        return;
+      }
+
+      final fileName = 'qr_produksi_$produksiId.png';
+      final filePath = '${appDir.path}/$fileName';
+      final file = File(filePath);
+      
+      await file.writeAsBytes(image.buffer.asUint8List());
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('QR Code berhasil disimpan:\n$fileName'),
+            duration: const Duration(seconds: 3),
+            action: SnackBarAction(
+              label: 'Lihat',
+              onPressed: () async {
+                // Implementasi untuk membuka file atau share
+              },
+            ),
+          ),
+        );
+      }
+      
+      print('QR Code saved to: $filePath');
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+      print('Error downloading QR: $e');
+    }
   }
 }
