@@ -5,6 +5,7 @@ class ProductionTextField extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
   final ValueChanged<String>? onChanged;
+  final int? maxLength;
 
   const ProductionTextField({
     super.key,
@@ -12,6 +13,7 @@ class ProductionTextField extends StatelessWidget {
     required this.hint,
     required this.controller,
     this.onChanged,
+    this.maxLength,
   });
 
   @override
@@ -24,6 +26,7 @@ class ProductionTextField extends StatelessWidget {
         TextField(
           controller: controller,
           onChanged: onChanged,
+          maxLength: maxLength,
           decoration: InputDecoration(
             hintText: hint,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),

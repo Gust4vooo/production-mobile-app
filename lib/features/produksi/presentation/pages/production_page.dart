@@ -11,16 +11,58 @@ import '../../domain/produksi_status_utils.dart';
 import '../../../../core/widgets/custom_filter_chip.dart';
 import '../widgets/production_code_display.dart';
 import '../widgets/production_shipping_modal.dart';
+import '../widgets/qr_scanner_dialog.dart';
 
 class ProductionScreen extends StatelessWidget {
   const ProductionScreen({super.key});
+
+  void _handleQrScanResult(BuildContext context, String qrValue) {
+    // Parse QR value and navigate to detail page
+    final int? produksiId = int.tryParse(qrValue);
+    if (produksiId != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('QR Code terdeteksi!'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+      // Navigate to detail page
+      context.push('/production/detail/$produksiId');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('QR Code tidak valid: $qrValue'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  void _openQrScanner(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => QrScannerDialog(
+        onScanResult: (qrValue) => _handleQrScanResult(context, qrValue),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<ProduksiViewModel>();
 
     return Scaffold(
-      appBar: const CustomAppBar(title: 'Produksi'),
+      appBar: CustomAppBar(
+        title: 'Produksi',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.camera_alt),
+            tooltip: 'Scan QR Code',
+            onPressed: () => _openQrScanner(context),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Padding(
@@ -130,7 +172,9 @@ class ProductionScreen extends StatelessWidget {
                                   Row(
                                     children: [
                                       Text(
-                                        produksi.tujuanPengiriman,
+                                        produksi.tujuanPengiriman.length > 17 
+                                          ? '${produksi.tujuanPengiriman.substring(0, 17)}...'
+                                          : produksi.tujuanPengiriman,
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 17,

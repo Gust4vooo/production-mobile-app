@@ -84,6 +84,7 @@ class _ShippingInfoModalState extends State<ShippingInfoModal> {
             label: 'Tujuan Pengiriman',
             hint: 'Alamat atau nama pelanggan',
             controller: _destinationController,
+            maxLength: 15,
           ),
           const SizedBox(height: 16),
           ProductionDatePicker(

@@ -64,6 +64,31 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           : produksiHeader == null
               ? const Center(child: Text('Data produksi tidak ditemukan.'))
               : _buildDetails(produksiHeader, itemList),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showQrCodeDialog(context),
+        tooltip: 'Lihat QR Code',
+        backgroundColor: const Color.fromARGB(255, 7, 117, 70),
+        foregroundColor: Colors.white,
+        elevation: 4,
+        child: const Icon(Icons.qr_code_2, size: 32),
+      ),
+    );
+  }
+
+  void _showQrCodeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: QrCodeDisplay(
+              produksiId: widget.produksiId,
+              qrKey: qrKey,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -73,11 +98,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       children: [
         ShippingInfoSection(produksiHeader: header),
         const SizedBox(height: 12),
-        QrCodeDisplay(
-          produksiId: widget.produksiId,
-          qrKey: qrKey,
-        ),
-        const SizedBox(height: 32),
         ProductItemList(items: items),
       ],
     );

@@ -75,43 +75,36 @@ class _QrCodeDisplayState extends State<QrCodeDisplay> {
           'QR Code Produksi',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 12),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                RepaintBoundary(
-                  key: widget.qrKey,
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0),
-                    color: Colors.white,
-                    child: QrImageView(
-                      data: widget.produksiId,
-                      version: QrVersions.auto,
-                      size: 250.0,
-                      errorCorrectionLevel: QrErrorCorrectLevel.L,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: isSaving ? null : _downloadQrCode,
-                    icon: isSaving
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.download),
-                    label: Text(
-                      isSaving ? 'Menyimpan...' : 'Simpan ke Galeri',
-                    ),
-                  ),
-                ),
-              ],
+        const SizedBox(height: 16),
+        Center(
+          child: RepaintBoundary(
+            key: widget.qrKey,
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              color: Colors.white,
+              child: QrImageView(
+                data: widget.produksiId,
+                version: QrVersions.auto,
+                size: 250.0,
+                errorCorrectionLevel: QrErrorCorrectLevel.L,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: isSaving ? null : _downloadQrCode,
+            icon: isSaving
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.download),
+            label: Text(
+              isSaving ? 'Menyimpan...' : 'Simpan ke Galeri',
             ),
           ),
         ),
