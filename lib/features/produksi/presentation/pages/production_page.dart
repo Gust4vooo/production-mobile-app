@@ -8,6 +8,7 @@ import '../../../../core/widgets/search_bar.dart';
 import '../viewmodels/produksi_view_model.dart';
 import '../../domain/produksi_status.dart';
 import '../../domain/produksi_status_utils.dart';
+import '../../../../core/widgets/custom_filter_chip.dart';
 import '../widgets/production_code_display.dart';
 import '../widgets/production_shipping_modal.dart';
 
@@ -24,11 +25,80 @@ class ProductionScreen extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: CustomSearchBar(
-              hintText: 'Cari produksi...',
-              onChanged: (value) {
-                viewModel.setSearchQuery(value);
-              },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomSearchBar(
+                        hintText: 'Cari produksi...',
+                        onChanged: (value) {
+                          viewModel.setSearchQuery(value);
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    PopupMenuButton<ProduksiStatus?>(
+                      icon: const Icon(Icons.filter_list),
+                      tooltip: 'Filter by Status',
+                      initialValue: viewModel.selectedStatus,
+                      onSelected: (ProduksiStatus? result) {
+                        viewModel.setSelectedStatus(result);
+                      },
+                      itemBuilder: (BuildContext context) => <PopupMenuEntry<ProduksiStatus?>>[
+                        const PopupMenuItem<ProduksiStatus?>(
+                          value: null,
+                          child: Text('Semua Status'),
+                          
+                        ),
+                        ...ProduksiStatus.values.map((status) {
+                          return PopupMenuItem<ProduksiStatus?>(
+                            value: status,
+                            child: Text(ProduksiStatusUtils.getStatusText(status)),
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.date_range),
+                      onPressed: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: viewModel.selectedDate ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        if (picked != null) {
+                          viewModel.setSelectedDate(picked);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                if (viewModel.selectedDate != null || viewModel.selectedStatus != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Row(
+                      children: [
+                        if (viewModel.selectedStatus != null)
+                          CustomFilterChip(
+                            label: 'Status: ${ProduksiStatusUtils.getStatusText(viewModel.selectedStatus!)}',
+                            onClear: () => viewModel.setSelectedStatus(null),
+                            color: Colors.blue,
+                          ),
+                        if (viewModel.selectedDate != null)
+                          const SizedBox(width: 8),
+                        if (viewModel.selectedDate != null)
+                          CustomFilterChip(
+                            label: 'Tanggal: ${viewModel.selectedDate!.day}/${viewModel.selectedDate!.month}/${viewModel.selectedDate!.year}',
+                            onClear: () => viewModel.setSelectedDate(null),
+                            color: Colors.green,
+                          ),
+                      ],
+                    ),
+                  ),
+              ],
             ),
           ),
           Expanded(

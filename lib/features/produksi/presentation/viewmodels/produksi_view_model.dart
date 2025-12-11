@@ -16,6 +16,11 @@ class ProduksiViewModel extends ChangeNotifier {
   ProduksiData? _produksiToEdit;
   ItemProduksiData? _editingItem;
   String _searchQuery = '';
+  ProduksiStatus? _selectedStatus;
+  DateTime? _selectedDate;
+
+  ProduksiStatus? get selectedStatus => _selectedStatus;
+  DateTime? get selectedDate => _selectedDate;
   SortOrder _sortOrder = SortOrder.ascending;
 
   SortOrder get sortOrder => _sortOrder;
@@ -43,11 +48,20 @@ class ProduksiViewModel extends ChangeNotifier {
   String? get tempKodeProduksi => _tempKodeProduksi;
   List<Map<String, dynamic>> get tempItems => _tempItems;
   List<ProduksiData> get filteredProduksiList {
-    var filteredList = _searchQuery.isEmpty
-        ? _produksiList
-        : _produksiList.where((produksi) =>
-            produksi.tujuanPengiriman.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            (produksi.kodeProduksi?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false)).toList();
+    var filteredList = _produksiList.where((produksi) {
+      final searchMatch = _searchQuery.isEmpty ||
+          produksi.tujuanPengiriman.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          (produksi.kodeProduksi?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
+
+      final statusMatch = _selectedStatus == null || produksi.status == _selectedStatus;
+
+      final dateMatch = _selectedDate == null ||
+          (produksi.tanggalPengiriman.year == _selectedDate!.year &&
+              produksi.tanggalPengiriman.month == _selectedDate!.month &&
+              produksi.tanggalPengiriman.day == _selectedDate!.day);
+
+      return searchMatch && statusMatch && dateMatch;
+    }).toList();
     
     filteredList.sort((a, b) {
       int statusComparison = a.status.index.compareTo(b.status.index);
@@ -65,6 +79,16 @@ class ProduksiViewModel extends ChangeNotifier {
 
   ProduksiViewModel(this._repository) {
     fetchProduksi();
+  }
+
+  void setSelectedStatus(ProduksiStatus? status) {
+    _selectedStatus = status;
+    notifyListeners();
+  }
+
+  void setSelectedDate(DateTime? date) {
+    _selectedDate = date;
+    notifyListeners();
   }
 
   void toggleSortOrder() {
