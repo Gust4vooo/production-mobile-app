@@ -1,0 +1,36 @@
+name: seger
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  drift: ^2.21.0
+  sqlite3_flutter_libs: ^0.5.22
+  flutter:
+    sdk: flutter
+  go_router: ^16.2.4
+  intl: ^0.18.1
+  path_provider: ^2.1.5
+  provider: ^6.0.5
+  path: ^1.8.0 
+  image_picker: ^1.2.1
+  qr_flutter: ^4.1.0
+  permission_handler: 12.0.1
+  mobile_scanner: 3.5.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  drift_dev: ^2.21.2
+  analyzer: '>=6.2.0 <7.0.0'
+
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/

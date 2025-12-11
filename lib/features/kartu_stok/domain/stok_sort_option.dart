@@ -1,0 +1,1 @@
+enum StockSortOption { byStatusPlenty, byStatusEmpty }
