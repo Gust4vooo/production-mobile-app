@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:seger/core/database/app.database.dart';
 import 'package:seger/features/kartu_stok/data/repositories/kartu_stok_repository.dart';
 import 'package:drift/drift.dart';
-import 'package:seger/core/widgets/status_filter_button.dart';
+import 'package:seger/features/kartu_stok/domain/stok_sort_option.dart';
 import 'package:seger/core/database/tables/kartu_stok_table.dart';
 // import 'package:seger/features/kartu_stok/domain/kartu_stok_utils.dart';
 
@@ -228,8 +228,12 @@ class KartuStokViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void sortItemsByStatus(StockSortOption option) {
+  void sortItemsByStatus(StockSortOption? option) {
     _currentSortOption = option;
+    if (option == null) {
+      fetchKartuStok(); 
+      return;
+    }
     _kartuStokList.sort((a, b) {
       if (option == StockSortOption.byStatusPlenty) {
         return a.status.index.compareTo(b.status.index);

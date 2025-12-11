@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-
-enum StockSortOption {
-  byStatusPlenty,
-  byStatusEmpty,
-}
+import 'package:seger/features/kartu_stok/domain/stok_sort_option.dart';
 
 class StatusFilterButton extends StatelessWidget {
   final Function(StockSortOption option) onSortChanged;

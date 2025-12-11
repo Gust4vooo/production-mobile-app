@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/widgets/add_button.dart';
+import '../../../../core/widgets/custom_filter_chip.dart';
 import '../../../../core/widgets/search_bar.dart';
 import '../viewmodels/kartu_stok_view_model.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../core/database/app.database.dart';
+import '../../domain/stok_sort_option.dart';
+import '../../domain/stok_sort_option_utils.dart';
 import '../widgets/stock_item_card.dart';
-import '../../../../core/widgets/status_filter_button.dart';
 import '../widgets/stock_form.dart';
 
 class StockScreen extends StatefulWidget {
@@ -64,7 +66,25 @@ Widget build(BuildContext context) {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: _buildSearchAndFilter(viewModel),
+          child: Column(
+            children: [
+              _buildSearchAndFilter(viewModel),
+              if (viewModel.currentSortOption != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: [
+                      CustomFilterChip(
+                        label:
+                            'Urutan: ${StokSortOptionUtils.getSortOptionText(viewModel.currentSortOption)}',
+                        onClear: () => viewModel.sortItemsByStatus(null),
+                        color: Colors.blue,
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ),
         Expanded(
           child: viewModel.isLoading
@@ -120,12 +140,26 @@ Widget build(BuildContext context) {
           ),
         ),
         const SizedBox(width: 8),
-        StatusFilterButton(
-          offset: const Offset(4, -1),
-          currentSortOption: viewModel.currentSortOption,
-          onSortChanged: (option) {
-            viewModel.sortItemsByStatus(option);
+        PopupMenuButton<StockSortOption?>(
+          icon: const Icon(Icons.filter_list),
+          tooltip: 'Filter by Status',
+          initialValue: viewModel.currentSortOption,
+          onSelected: (StockSortOption? result) {
+            viewModel.sortItemsByStatus(result);
           },
+          itemBuilder: (BuildContext context) =>
+              <PopupMenuEntry<StockSortOption?>>[
+            const PopupMenuItem<StockSortOption?>(
+              value: null,
+              child: Text('Semua'),
+            ),
+            ...StockSortOption.values.map((status) {
+              return PopupMenuItem<StockSortOption?>(
+                value: status,
+                child: Text(StokSortOptionUtils.getSortOptionText(status)),
+              );
+            }).toList(),
+          ],
         ),
       ],
     );
